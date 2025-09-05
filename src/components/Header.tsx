@@ -52,7 +52,7 @@ const Header: React.FC = () => {
           className="text-2xl font-bold tracking-wider text-[#007BFF] cursor-pointer"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
-          JD
+          TT
         </div>
         
         <div className="flex items-center gap-4">
