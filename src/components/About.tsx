@@ -18,7 +18,7 @@ const timelineItemVariants: Variants = {
 };
 
 
-const TimelineItem: React.FC<{ event: TimelineEvent; index: number }> = ({ event, index }) => (
+const TimelineItem: React.FC<{ event: TimelineEvent; index: number }> = ({ event, index: _ }) => (
     <motion.div 
         className="relative pl-8 sm:pl-12 py-4 group"
         variants={timelineItemVariants}
