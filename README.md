@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio — tomtestu.me
 
-## Getting Started
+Portfolio bilingue (FR/EN) de **Tom Testu** — étudiant en 2e année de BUT Informatique à l'IUT de Toulouse. Applications iOS, sites web et projets universitaires.
 
-First, run the development server:
+## Stack
+
+- [Next.js 16](https://nextjs.org) (App Router, export statique)
+- React 19 · TypeScript
+- [Tailwind CSS v4](https://tailwindcss.com)
+- Instrument Sans + Geist Mono, auto-hébergées via `next/font`
+
+## Structure
+
+- `app/(fr)/` — version française (route `/`)
+- `app/(en)/en/` — version anglaise (route `/en/`)
+- `app/globals.css` — tokens de design (papier, encre, accent)
+- `components/` — sections du site et cadres de présentation (mockups iPhone / navigateur adaptés d'[Opensource UI](https://opensourceui.in), MIT)
+- `lib/projects.ts` — contenu des projets, bilingue
+- `public/shots/` — captures utilisées sur le site (app Aven + projets)
+
+## Développement
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+bun install
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Déploiement
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Export statique (`out/`) construit par GitHub Actions et publié sur GitHub Pages → **https://tomtestu.me**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Modifier le contenu
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Projets : tout est dans `lib/projects.ts` (champs `fr` / `en`).
+- Textes du site (hero, à propos, contact) : dans `components/*.tsx`, via le helper `tx(lang, fr, en)`.
+</content>
