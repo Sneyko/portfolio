@@ -26,11 +26,11 @@ function ProjectCard({
   return (
     <article
       className={cn(
-        "group flex flex-col overflow-hidden rounded-[14px] border border-line bg-card transition-colors duration-300 hover:border-ink/25",
+        "group flex flex-col overflow-hidden rounded-2xl border border-divider-light bg-white transition-colors duration-300 hover:border-slate-300 dark:border-divider-dark dark:bg-slate-900 dark:hover:border-slate-600",
         className,
       )}
     >
-      <div className="border-b border-line p-3 md:p-4">
+      <div className="border-b border-divider-light p-3 md:p-4 dark:border-divider-dark">
         <div className="transition-transform duration-300 ease-out group-hover:scale-[1.012] motion-reduce:transition-none">
           {cover}
         </div>
@@ -38,21 +38,21 @@ function ProjectCard({
 
       <div className="flex flex-1 flex-col p-5 md:p-6">
         <div className="flex items-baseline justify-between gap-4">
-          <h3 className="text-[17px] font-medium tracking-[-0.01em] md:text-[18px]">
+          <h3 className="text-[17px] font-bold tracking-tight text-slate-700 md:text-[18px] dark:text-slate-200">
             {project.title}
           </h3>
-          <span className="shrink-0 font-mono text-[11.5px] text-ink/40">
+          <span className="shrink-0 font-mono text-[11.5px] text-slate-400">
             {project.year}
           </span>
         </div>
-        <p className="mt-1 font-mono text-[11px] text-ink/45">
+        <p className="mt-1 font-mono text-[11px] text-slate-400">
           {project.category[lang]}
         </p>
-        <p className="mt-3.5 text-[14px] leading-relaxed text-ink/70">
+        <p className="mt-3.5 text-[14px] leading-relaxed text-pretty text-slate-600 dark:text-slate-400">
           {project.summary[lang]}
         </p>
         {project.role ? (
-          <p className="mt-2.5 font-mono text-[11px] text-ink/45">
+          <p className="mt-2.5 font-mono text-[11px] text-slate-400">
             {project.role[lang]}
           </p>
         ) : null}
@@ -83,12 +83,13 @@ export function ProjectsSection({ lang }: { lang: Lang }) {
   };
 
   return (
-    <section id="projets" className="mt-24 md:mt-32">
+    <section id="projets" className="mb-12 lg:mb-24">
+      <div className="content-wrapper">
       <SectionHeader
         title={tx(lang, "Projets", "Projects")}
         aside={tx(lang, "9 projets — 2025 · 2026", "9 projects — 2025 · 2026")}
       />
-      <p className="mt-4 max-w-[64ch] text-[15px] leading-relaxed text-ink/65">
+      <p className="mt-4 max-w-[64ch] text-[15px] leading-relaxed text-pretty text-slate-600 dark:text-slate-400">
         {tx(
           lang,
           "Une app iOS, un webdocumentaire, des sites et des outils — réalisés en cours de BUT ou en dehors. Les dépôts publics sont sur GitHub.",
@@ -199,6 +200,7 @@ export function ProjectsSection({ lang }: { lang: Lang }) {
           lang={lang}
           cover={<KotlinCover />}
         />
+      </div>
       </div>
     </section>
   );
