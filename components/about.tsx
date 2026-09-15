@@ -1,4 +1,4 @@
-import { SectionHeader } from "@/components/ui";
+import { SectionTitle } from "@/components/section-title";
 import { tx, type Lang } from "@/lib/i18n";
 
 export function About({ lang }: { lang: Lang }) {
@@ -19,37 +19,31 @@ export function About({ lang }: { lang: Lang }) {
   ];
 
   return (
-    <section id="a-propos" className="mt-24 md:mt-32">
-      <SectionHeader title={tx(lang, "À propos", "About")} />
-
-      <div className="mt-8 grid gap-12 md:grid-cols-12 md:gap-8">
-        <div className="md:col-span-7">
-          <p className="max-w-[62ch] text-[15.5px] leading-[1.8] text-ink/75">
-            {tx(
-              lang,
-              "Je suis en deuxième année de BUT Informatique à l'IUT de Toulouse, parcours AGED (Administration, Gestion et Exploitation des Données). J'aime construire des choses complètes — une app iOS en Swift, un site, un outil — en passant par la conception, l'interface et les détails qui rendent un produit agréable à utiliser.",
-              "I'm a second-year Computer Science student at IUT Toulouse (BUT Informatique, AGED track — data management). I like building complete things — an iOS app in Swift, a website, a tool — from design to the details that make a product pleasant to use.",
-            )}
-          </p>
-          <p className="mt-4 max-w-[62ch] text-[15.5px] leading-[1.8] text-ink/75">
-            {tx(
-              lang,
-              "En dehors des cours, je développe mes propres applications iOS et j'explore les outils d'IA pour assister le développement : Cursor, Claude Code, MCP, agents. La plupart des projets présentés ici sont nés comme ça.",
-              "Outside of class, I build my own iOS apps and explore AI tools for software development: Cursor, Claude Code, MCP, agents. Most of the projects above were born that way.",
-            )}
-          </p>
-        </div>
-
-        <div className="md:col-span-5">
-          <h3 className="font-mono text-[12px] text-ink/45">
+    <>
+      <section id="a-propos" className="mb-12 lg:mb-24">
+        <SectionTitle
+          caption={tx(lang, "À propos", "About")}
+          title={tx(
+            lang,
+            "Étudiant en BUT Informatique à Toulouse.",
+            "Computer Science student in Toulouse.",
+          )}
+          description={tx(
+            lang,
+            "Deuxième année à l'IUT de Toulouse, parcours AGED. J'aime construire des choses complètes — une app iOS, un site, un outil — de la conception jusqu'aux détails d'usage.",
+            "Second year at IUT Toulouse (AGED track). I like building complete things — an iOS app, a website, a tool — from design to the details that make it pleasant to use.",
+          )}
+        />
+        <div className="content-wrapper mt-10">
+          <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400">
             {tx(lang, "Formation", "Education")}
           </h3>
-          <ul className="mt-4 space-y-5">
-            <li className="border-l-2 border-accent/70 pl-4">
-              <p className="text-[14px] font-medium">
+          <ul className="mt-4 max-w-xl space-y-5">
+            <li className="border-l-2 border-accent-600 pl-4">
+              <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
                 BUT Informatique — IUT de Toulouse
               </p>
-              <p className="mt-1 text-[13px] leading-relaxed text-ink/60">
+              <p className="mt-1 text-sm text-pretty text-slate-600 dark:text-slate-400">
                 {tx(
                   lang,
                   "Parcours AGED (Administration, Gestion et Exploitation des Données)",
@@ -59,8 +53,8 @@ export function About({ lang }: { lang: Lang }) {
                 2025 — {tx(lang, "en cours", "present")}
               </p>
             </li>
-            <li className="border-l-2 border-line pl-4">
-              <p className="text-[14px] font-medium">
+            <li className="border-l-2 border-slate-200 pl-4 dark:border-slate-700">
+              <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
                 {tx(lang, "Baccalauréat général", "French Baccalaureate")} —{" "}
                 {tx(
                   lang,
@@ -68,7 +62,7 @@ export function About({ lang }: { lang: Lang }) {
                   "Blaise Pascal high school, Châteauroux",
                 )}
               </p>
-              <p className="mt-1 text-[13px] leading-relaxed text-ink/60">
+              <p className="mt-1 text-sm text-pretty text-slate-600 dark:text-slate-400">
                 {tx(
                   lang,
                   "Spécialités Mathématiques et NSI, option Maths expertes",
@@ -80,30 +74,44 @@ export function About({ lang }: { lang: Lang }) {
             </li>
           </ul>
         </div>
-      </div>
+      </section>
 
-      <div className="mt-14">
-        <h3 className="font-mono text-[12px] text-ink/45">
-          {tx(lang, "Compétences", "Skills")}
-        </h3>
-        <div className="mt-5 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
-          {skillGroups.map((group) => (
-            <div key={group.label}>
-              <p className="text-[13px] font-medium text-ink/80">{group.label}</p>
-              <ul className="mt-2.5 flex flex-wrap gap-1.5">
-                {group.items.map((item) => (
-                  <li
-                    key={item}
-                    className="rounded-full border border-line px-2.5 py-[3px] font-mono text-[11px] text-ink/60"
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+      <section id="competences" className="mb-12 lg:mb-24">
+        <SectionTitle
+          caption={tx(lang, "Compétences", "Skills")}
+          title={tx(
+            lang,
+            "Un socle solide, élargi par la pratique.",
+            "A solid core, expanded by building.",
+          )}
+          description={tx(
+            lang,
+            "Cours, projets universitaires et apps perso — surtout iOS, le web, et les outils d'IA pour le développement.",
+            "Coursework, university projects and personal apps — mostly iOS, the web, and AI tools for software development.",
+          )}
+        />
+        <div className="content-wrapper mt-10">
+          <div className="grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+            {skillGroups.map((group) => (
+              <div key={group.label}>
+                <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
+                  {group.label}
+                </p>
+                <ul className="mt-2.5 flex flex-wrap gap-1.5">
+                  {group.items.map((item) => (
+                    <li
+                      key={item}
+                      className="rounded-full border border-slate-200 px-2.5 py-[3px] font-mono text-[11px] text-slate-500 dark:border-slate-700 dark:text-slate-400"
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

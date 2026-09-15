@@ -1,54 +1,73 @@
 import { GithubIcon } from "@/components/github-icon";
-import { PhoneMockupCard } from "@/components/mockups/phone-mockup-card";
+import { HeroPortrait } from "@/components/hero-portrait";
+import { TechStack } from "@/components/tech-stack";
 import { ButtonLink } from "@/components/ui";
 import { tx, type Lang } from "@/lib/i18n";
 import { site } from "@/lib/site";
 
 export function Hero({ lang }: { lang: Lang }) {
   return (
-    <section className="grid grid-cols-1 items-center gap-14 pt-14 md:grid-cols-12 md:gap-8 md:pt-20">
-      <div className="md:col-span-7">
-        <p className="rise inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1.5 font-mono text-[11.5px] text-ink/65">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#1a9950]" aria-hidden="true" />
-          {tx(
-            lang,
-            "En recherche d'un stage informatique",
-            "Looking for a software internship",
-          )}
-        </p>
+    <header
+      id="page-header"
+      className="background-grid background-grid--fade-out pt-36 pb-20 lg:pt-52 lg:pb-28"
+    >
+      <div className="content-wrapper">
+        <div className="relative">
+          <div className="relative z-10 max-w-2xl">
+            <p className="enter-x enter-x-1 mb-1 flex items-center gap-1 text-2xl text-slate-600 md:mb-0 md:gap-2 md:text-4xl dark:text-slate-400">
+              {tx(lang, "salut !", "hi!")}{" "}
+              <span className="inline-block origin-bottom-right" aria-hidden="true">
+                👋
+              </span>
+            </p>
 
-        <h1 className="rise rise-1 mt-7 text-[clamp(2.9rem,8vw,4.9rem)] leading-[0.98] font-medium tracking-[-0.035em]">
-          Tom Testu
-        </h1>
+            <h1 className="enter-x enter-x-2 mb-4 block text-[2.5rem] leading-none font-extrabold text-slate-700 md:mb-6 md:text-7xl dark:text-slate-300">
+              {tx(lang, "Je suis", "I'm")}{" "}
+              <strong className="text-accent-600 dark:text-accent-500">Tom</strong>{" "}
+              Testu,
+            </h1>
 
-        <p className="rise rise-2 mt-6 max-w-[54ch] text-[16.5px] leading-relaxed text-ink/70">
-          {tx(
-            lang,
-            "Étudiant en 2e année de BUT Informatique à l'IUT de Toulouse. Je conçois des applications iOS, des sites web et des outils — et j'aime les interfaces soignées.",
-            "Second-year Computer Science student at IUT Toulouse. I build iOS apps, websites and tools — and I care about polished interfaces.",
-          )}
-        </p>
+            <p className="enter-x enter-x-3 max-w-[36rem] text-base text-pretty text-slate-600 md:text-xl dark:text-slate-400">
+              {tx(lang, "un", "a")}{" "}
+              <strong className="font-bold text-slate-700 lowercase dark:text-slate-300">
+                {tx(
+                  lang,
+                  "étudiant en informatique",
+                  "computer science student",
+                )}
+              </strong>{" "}
+              {tx(
+                lang,
+                "qui conçoit des applications iOS, des sites web et des outils — avec un vrai soin pour l'interface.",
+                "who builds iOS apps, websites and tools — and cares about polished UI.",
+              )}
+            </p>
+          </div>
 
-        <div className="rise rise-3 mt-9 flex flex-wrap items-center gap-3">
-          <ButtonLink href="#projets">
-            {tx(lang, "Voir les projets", "See the work")}
-          </ButtonLink>
-          <ButtonLink href={site.github} variant="ghost">
-            <GithubIcon size={16} />
-            GitHub
-          </ButtonLink>
+          <div className="enter-x enter-x-4 mt-6 flex flex-wrap items-center gap-2 md:mt-8">
+            <ButtonLink href="#contact">
+              {tx(lang, "Me contacter", "Get in Touch")}
+            </ButtonLink>
+            <ButtonLink href={site.github} variant="ghost">
+              <GithubIcon size={20} />
+              GitHub
+            </ButtonLink>
+            <p className="button button--ghost button--big pointer-events-none gap-2.5 px-2.5 text-accent-500 dark:text-accent-400">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute top-[-4px] left-[-4px] inline-flex h-4 w-4 animate-ping rounded-full bg-accent-600 opacity-75 dark:bg-accent-300" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-accent-500 dark:bg-accent-400" />
+              </span>
+              {tx(lang, "Ouvert au stage", "Open for internships")}
+            </p>
+          </div>
+
+          <div className="enter-x enter-x-5 mt-20 lg:mt-36">
+            <TechStack lang={lang} />
+          </div>
+
+          <HeroPortrait lang={lang} />
         </div>
       </div>
-
-      <div className="rise rise-2 flex justify-center md:col-span-5 md:justify-end">
-        <PhoneMockupCard variant="titanium" className="w-[248px] md:w-[272px]">
-          <img
-            src="/shots/aven/rank.png"
-            alt={tx(lang, "Aven — écran de rang global", "Aven — global rank screen")}
-            className="h-full w-full object-cover"
-          />
-        </PhoneMockupCard>
-      </div>
-    </section>
+    </header>
   );
 }

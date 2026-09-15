@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import "../globals.css";
 
+import { ThemeScript } from "@/components/theme-script";
 import { mono, sans } from "@/lib/fonts";
 import { site } from "@/lib/site";
 
@@ -28,14 +29,25 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f5f4f1",
-  colorScheme: "light",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+  ],
 };
 
 export default function FrLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr" className={`${sans.variable} ${mono.variable}`}>
-      <body className="min-h-dvh bg-paper text-ink antialiased">{children}</body>
+    <html
+      lang="fr"
+      className={`${sans.variable} ${mono.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <ThemeScript />
+      </head>
+      <body className="min-h-dvh bg-paper text-slate-900 antialiased dark:bg-slate-900 dark:text-slate-200">
+        {children}
+      </body>
     </html>
   );
 }

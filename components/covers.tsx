@@ -145,28 +145,28 @@ export function BlueprintCover({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex flex-col justify-center rounded-[10px] border border-line bg-white px-6 py-8 md:px-10",
+        "flex flex-col justify-center rounded-[10px] border border-slate-200 bg-white px-6 py-8 md:px-10 dark:border-slate-700 dark:bg-slate-900",
         className,
       )}
     >
       <div className="mx-auto w-full max-w-[560px]">
-        <p className="font-mono text-[10.5px] text-ink/40">
+        <p className="font-mono text-[10.5px] text-slate-400">
           sae-s2-01 — modèle de classes
         </p>
-        <div className="mt-4 divide-y divide-line border-y border-line">
+        <div className="mt-4 divide-y divide-slate-200 border-y border-slate-200 dark:divide-slate-700 dark:border-slate-700">
           {rows.map(([kind, value]) => (
             <div
               key={value}
               className="flex items-baseline gap-4 py-2.5 font-mono text-[11.5px]"
             >
-              <span className="w-16 shrink-0 text-[10.5px] text-ink/45">
+              <span className="w-16 shrink-0 text-[10.5px] text-slate-400">
                 {kind}/
               </span>
-              <span className="text-ink/80">{value}</span>
+              <span className="text-slate-700 dark:text-slate-200">{value}</span>
             </div>
           ))}
         </div>
-        <p className="mt-4 font-mono text-[10.5px] text-ink/40">
+        <p className="mt-4 font-mono text-[10.5px] text-slate-400">
           Java · Maven · base de données
         </p>
       </div>

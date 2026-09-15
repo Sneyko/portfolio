@@ -1,13 +1,13 @@
-import { Geist_Mono, Instrument_Sans } from "next/font/google";
+import { JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 
-export const sans = Instrument_Sans({
-  subsets: ["latin"],
-  variable: "--font-instrument",
+export const sans = Plus_Jakarta_Sans({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-plus-jakarta",
   display: "swap",
 });
 
-export const mono = Geist_Mono({
+export const mono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-geist-mono",
+  variable: "--font-jetbrains",
   display: "swap",
 });
