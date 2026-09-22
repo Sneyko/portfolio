@@ -32,7 +32,7 @@ export function SiteHeader({ lang }: { lang: Lang }) {
       <div className={scrolled ? "h-2 -mt-2" : "h-2"} />
       <div className="content-wrapper-max">
         <div className="relative z-50 flex h-16 items-center justify-between px-2 text-sm md:px-4">
-          <nav className="flex md:gap-2" data-accent="violet">
+          <nav className="flex md:gap-2">
             <Link
               href={home}
               aria-label="Home"
