@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState, type TransitionEvent } from "react";
+import { useId, useRef, useState } from "react";
 import { X } from "lucide-react";
 
 import {
@@ -86,7 +86,7 @@ export function ProjectFolder({ project, lang }: { project: Project; lang: Lang 
     }
     dialog.dataset.closing = "true";
     const timeout = window.setTimeout(() => dialog.close(), 180);
-    const finish = (event: TransitionEvent) => {
+    const finish = (event: globalThis.TransitionEvent) => {
       if (event.target !== dialog || event.propertyName !== "opacity") return;
       window.clearTimeout(timeout);
       dialog.removeEventListener("transitionend", finish);
