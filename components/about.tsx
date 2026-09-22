@@ -20,7 +20,7 @@ export function About({ lang }: { lang: Lang }) {
 
   return (
     <>
-      <section id="a-propos" className="mb-12 lg:mb-24">
+      <section id="a-propos" className="mb-12 scroll-mt-28 lg:mb-24">
         <SectionTitle
           caption={tx(lang, "À propos", "About")}
           title={tx(
@@ -76,7 +76,7 @@ export function About({ lang }: { lang: Lang }) {
         </div>
       </section>
 
-      <section id="competences" className="mb-12 lg:mb-24">
+      <section id="competences" className="mb-12 scroll-mt-28 lg:mb-24">
         <SectionTitle
           caption={tx(lang, "Compétences", "Skills")}
           title={tx(
