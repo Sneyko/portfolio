@@ -1,32 +1,7 @@
-import FolderTabCard from "@/components/rewamp/FolderTabCard";
+import { ProjectFolder } from "@/components/project-folder";
 import { SectionHeader } from "@/components/ui";
 import { tx, type Lang } from "@/lib/i18n";
-import { aven, projects, type Project } from "@/lib/projects";
-
-function ProjectFolder({ project, lang }: { project: Project; lang: Lang }) {
-  const live = project.links?.live;
-  const github = project.links?.github;
-  const href = live ?? github;
-  const actionLabel = live
-    ? tx(lang, `Voir le site — ${project.title}`, `Visit site — ${project.title}`)
-    : github
-      ? `GitHub — ${project.title}`
-      : undefined;
-
-  return (
-    <FolderTabCard
-      title={project.title}
-      subtitle={project.category[lang]}
-      description={project.summary[lang]}
-      tagsCount={project.year}
-      shotsCount={project.tech.slice(0, 2).join(" · ")}
-      href={href}
-      actionLabel={actionLabel}
-      secondaryHref={live && github ? github : undefined}
-      secondaryLabel={live && github ? "GitHub" : undefined}
-    />
-  );
-}
+import { aven, projects } from "@/lib/projects";
 
 export function ProjectsSection({ lang }: { lang: Lang }) {
   const items = [aven, ...projects];

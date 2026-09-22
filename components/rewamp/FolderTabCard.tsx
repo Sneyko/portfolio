@@ -11,10 +11,9 @@ export type FolderTabCardProps = {
   tagsCount?: string;
   tagsLabel?: string;
   shotsCount?: string;
-  href?: string;
+  onOpen?: () => void;
+  open?: boolean;
   actionLabel?: string;
-  secondaryHref?: string;
-  secondaryLabel?: string;
   className?: string;
 };
 
@@ -25,10 +24,9 @@ export default function FolderTabCard({
   tagsCount,
   tagsLabel,
   shotsCount,
-  href,
+  onOpen,
+  open = false,
   actionLabel,
-  secondaryHref,
-  secondaryLabel,
   className = "",
 }: FolderTabCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -144,12 +142,13 @@ export default function FolderTabCard({
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-white/25 via-transparent to-transparent dark:from-black/50" />
           </div>
 
-          {href ? (
+          {onOpen ? (
             <div className="absolute top-3 right-3 z-20 sm:top-3.5 sm:right-3.5">
-              <motion.a
-                href={href}
-                target="_blank"
-                rel="noreferrer"
+              <motion.button
+                type="button"
+                onClick={onOpen}
+                aria-expanded={open}
+                aria-haspopup="dialog"
                 aria-label={actionLabel ?? title}
                 whileHover={reduce ? undefined : { scale: 1.1, rotate: 6 }}
                 whileTap={reduce ? undefined : { scale: 0.94 }}
@@ -161,7 +160,7 @@ export default function FolderTabCard({
                   className={isCompact ? "h-3.5 w-3.5" : "h-4 w-4"}
                   aria-hidden="true"
                 />
-              </motion.a>
+              </motion.button>
             </div>
           ) : null}
 
@@ -247,18 +246,7 @@ export default function FolderTabCard({
                     ) : null}
                   </div>
 
-                  {secondaryHref && secondaryLabel ? (
-                    <a
-                      href={secondaryHref}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={`max-w-[46%] text-right leading-tight font-semibold text-accent-600 underline-offset-2 hover:underline dark:text-accent-400 ${
-                        isCompact ? "text-[9px]" : "text-[10px] sm:text-[11px]"
-                      }`}
-                    >
-                      {secondaryLabel}
-                    </a>
-                  ) : shotsCount ? (
+                  {shotsCount ? (
                     <p
                       className={`max-w-[46%] text-right leading-tight font-medium text-neutral-500 dark:text-neutral-400 ${
                         isCompact ? "text-[9px]" : "text-[10px] sm:text-[11px]"
