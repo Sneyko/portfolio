@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { BrowserMockupCard } from "@/components/mockups/browser-mockup-card";
 import { cn } from "@/lib/cn";
+import type { Lang } from "@/lib/i18n";
 
 /* Web page cover: a screenshot inside a browser frame. */
 export function WebCover({
@@ -25,6 +26,78 @@ export function WebCover({
         className="absolute inset-0 h-full w-full object-cover object-top"
       />
     </BrowserMockupCard>
+  );
+}
+
+/* Product cover: FreeScreen's presentation settings, the part you set before saving. */
+export function FreeScreenCover({
+  lang,
+  className,
+}: {
+  lang: Lang;
+  className?: string;
+}) {
+  const rows: Array<[string, string]> =
+    lang === "fr"
+      ? [
+          ["Style", "Glass clair"],
+          ["Coins", "Arrondis"],
+          ["Ombre", "Large"],
+          ["Fond", "Dégradé"],
+        ]
+      : [
+          ["Style", "Light glass"],
+          ["Corners", "Curved"],
+          ["Shadow", "Spread"],
+          ["Background", "Gradient"],
+        ];
+
+  return (
+    <div
+      className={cn(
+        "flex min-h-[220px] items-center justify-center overflow-hidden rounded-[10px] px-6 py-8 md:min-h-[260px] md:px-10",
+        className,
+      )}
+      style={{
+        background:
+          "linear-gradient(165deg, #f4fcfe 0%, #d5f2f8 55%, #8ad6e4 100%)",
+      }}
+    >
+      <div className="w-full max-w-[520px] overflow-hidden rounded-xl bg-white shadow-[0_16px_40px_rgba(12,70,88,0.14)] ring-1 ring-[#0e4c5c]/10">
+        <div className="flex items-center gap-3 border-b border-slate-200 px-4 py-3">
+          <img
+            src="/shots/free-screen/icon.png"
+            alt=""
+            width={28}
+            height={28}
+            className="h-7 w-7 rounded-[7px]"
+          />
+          <div className="min-w-0">
+            <p className="text-[13px] font-bold tracking-tight text-slate-700">
+              FreeScreen
+            </p>
+            <p className="font-mono text-[10.5px] text-slate-400">
+              {lang === "fr"
+                ? "Barre des menus · ⌘⌥X"
+                : "Menu bar · ⌘⌥X"}
+            </p>
+          </div>
+        </div>
+        <div className="divide-y divide-slate-200 px-4">
+          {rows.map(([label, value]) => (
+            <div
+              key={label}
+              className="flex items-baseline gap-4 py-2.5 font-mono text-[11.5px]"
+            >
+              <span className="w-24 shrink-0 text-[10.5px] text-slate-400">
+                {label}
+              </span>
+              <span className="text-slate-700">{value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
