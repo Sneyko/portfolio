@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { tx, type Lang } from "@/lib/i18n";
 
 function SwiftIcon() {
@@ -11,10 +13,39 @@ function SwiftIcon() {
   );
 }
 
-function KotlinIcon() {
+function ReactIcon() {
   return (
     <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden="true">
-      <path fill="currentColor" d="M3 3h18L12 12 21 21H3V3Z" />
+      <circle cx="12" cy="12" r="2.05" fill="currentColor" />
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="9.2"
+        ry="3.55"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.35"
+      />
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="9.2"
+        ry="3.55"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.35"
+        transform="rotate(60 12 12)"
+      />
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="9.2"
+        ry="3.55"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.35"
+        transform="rotate(120 12 12)"
+      />
     </svg>
   );
 }
@@ -26,17 +57,6 @@ function NextIcon() {
       <path
         d="M8 16V8h2.2l5.3 6.4V8H18v8h-2.1L10.5 9.5V16H8Z"
         fill="currentColor"
-      />
-    </svg>
-  );
-}
-
-function TailwindIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden="true">
-      <path
-        fill="currentColor"
-        d="M12 6c-2.7 0-4.4 1.3-5 4 1-1.3 2.1-1.8 3.4-1.5.7.2 1.3.7 1.8 1.4C13 11.4 14.2 12 16 12c2.7 0 4.4-1.3 5-4-1 1.3-2.1 1.8-3.4 1.5-.7-.2-1.3-.7-1.8-1.4C15 6.6 13.8 6 12 6Zm-5 6c-2.7 0-4.4 1.3-5 4 1-1.3 2.1-1.8 3.4-1.5.7.2 1.3.7 1.8 1.4C8 17.4 9.2 18 11 18c2.7 0 4.4-1.3 5-4-1 1.3-2.1 1.8-3.4 1.5-.7-.2-1.3-.7-1.8-1.4C10 12.6 8.8 12 7 12Z"
       />
     </svg>
   );
@@ -64,13 +84,58 @@ function CursorIcon() {
   );
 }
 
-const tools = [
+function HermesIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M12 2.2c.35 0 .68.16.86.46.46 1.02 1.48 1.66 2.58 1.9-1.28.16-2.38-.22-3.44-1.02-.18.52-.36.9-.36 1.42 0 .52.18.9.36 1.42 1.06-.8 2.16-1.18 3.44-1.02-1.1.24-2.12.88-2.58 1.9a1.05 1.05 0 0 1-1.72 0c-.46-1.02-1.48-1.66-2.58-1.9 1.28-.16 2.38.22 3.44 1.02.18-.52.36-.9.36-1.42 0-.52-.18-.9-.36-1.42-1.06.8-2.16 1.18-3.44 1.02 1.1-.24 2.12-.88 2.58-1.9.18-.3.51-.46.86-.46Z"
+      />
+      <path fill="currentColor" d="M11.2 8h1.6v13.2h-1.6Z" />
+      <path
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.45"
+        strokeLinecap="round"
+        d="M8.1 9.6c1.7 1.7 3.1 1.9 3.9 1.9s2.2-.2 3.9-1.9M7.3 13.4c2.1 2 3.7 2.2 4.7 2.2s2.6-.2 4.7-2.2M8.1 17.2c1.7 1.7 3.1 1.9 3.9 1.9s2.2-.2 3.9-1.9"
+      />
+    </svg>
+  );
+}
+
+const tools: Array<{
+  name: string;
+  hover: string;
+  Icon: () => ReactNode;
+  leadingDivider?: boolean;
+}> = [
   { name: "Swift", hover: "hover:text-[#F05138]", Icon: SwiftIcon },
-  { name: "Kotlin", hover: "hover:text-[#7F52FF]", Icon: KotlinIcon },
-  { name: "Next.js", hover: "hover:text-slate-900 dark:hover:text-white", Icon: NextIcon },
-  { name: "Tailwind CSS", hover: "hover:text-[#06B6D4]", Icon: TailwindIcon },
-  { name: "Git", hover: "hover:text-[#F05032]", Icon: GitIcon },
-  { name: "Cursor", hover: "hover:text-slate-900 dark:hover:text-white", Icon: CursorIcon },
+  {
+    name: "React",
+    hover: "hover:text-[#087EA4] dark:hover:text-[#58C4DC]",
+    Icon: ReactIcon,
+  },
+  {
+    name: "Next.js",
+    hover: "hover:text-slate-900 dark:hover:text-white",
+    Icon: NextIcon,
+  },
+  {
+    name: "Git",
+    hover: "hover:text-[#F05032]",
+    Icon: GitIcon,
+    leadingDivider: true,
+  },
+  {
+    name: "Cursor",
+    hover: "hover:text-slate-900 dark:hover:text-white",
+    Icon: CursorIcon,
+  },
+  {
+    name: "Hermès Agent",
+    hover: "hover:text-[#C4841D] dark:hover:text-[#E8B84A]",
+    Icon: HermesIcon,
+  },
 ];
 
 export function TechStack({ lang }: { lang: Lang }) {
@@ -80,9 +145,9 @@ export function TechStack({ lang }: { lang: Lang }) {
         {tx(lang, "stack / outils du moment :", "current favorite tech stack/tools:")}
       </p>
       <ul className="flex flex-wrap items-center gap-3.5 text-slate-500">
-        {tools.map((tool, index) => (
+        {tools.map((tool) => (
           <li key={tool.name} className="flex items-center gap-3.5">
-            {index === 4 ? (
+            {tool.leadingDivider ? (
               <span className="h-3 w-px bg-slate-300 dark:bg-slate-700" aria-hidden="true" />
             ) : null}
             <span className={`transition-colors duration-200 ${tool.hover}`} title={tool.name}>

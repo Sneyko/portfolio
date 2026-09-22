@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import {
   BlueprintCover,
+  FreeScreenCover,
   KotlinCover,
   TerminalCover,
   WebCover,
@@ -87,19 +88,26 @@ export function ProjectsSection({ lang }: { lang: Lang }) {
       <div className="content-wrapper">
       <SectionHeader
         title={tx(lang, "Projets", "Projects")}
-        aside={tx(lang, "9 projets — 2025 · 2026", "9 projects — 2025 · 2026")}
+        aside={tx(lang, "10 projets — 2025 · 2026", "10 projects — 2025 · 2026")}
       />
       <p className="mt-4 max-w-[64ch] text-[15px] leading-relaxed text-pretty text-slate-600 dark:text-slate-400">
         {tx(
           lang,
-          "Une app iOS, un webdocumentaire, des sites et des outils — réalisés en cours de BUT ou en dehors. Les dépôts publics sont sur GitHub.",
-          "One iOS app, a web documentary, websites and tools — built during my degree or on my own. Public repositories are on GitHub.",
+          "Une app iOS, une app macOS, un webdocumentaire, des sites et des outils — réalisés en cours de BUT ou en dehors. Les dépôts publics sont sur GitHub.",
+          "One iOS app, a macOS app, a web documentary, websites and tools — built during my degree or on my own. Public repositories are on GitHub.",
         )}
       </p>
 
       <FeaturedAven lang={lang} />
 
       <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
+        <ProjectCard
+          className="md:col-span-2"
+          project={bySlug("free-screen")}
+          lang={lang}
+          cover={<FreeScreenCover lang={lang} />}
+        />
+
         <ProjectCard
           className="md:col-span-2"
           project={bySlug("signal-perdu")}

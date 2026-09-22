@@ -57,6 +57,23 @@ export const aven: Project & {
 
 export const projects: Project[] = [
   {
+    slug: "free-screen",
+    title: "FreeScreen",
+    category: {
+      fr: "Application macOS · projet personnel",
+      en: "macOS app · personal project",
+    },
+    year: "2026",
+    summary: {
+      fr: "Capture d'écran native dans la barre des menus : zone, fenêtre ou écran entier, annotations, fond et export PNG ou JPEG. Les fichiers restent sur le Mac.",
+      en: "A native menu-bar screenshot app: region, window or full display, annotations, a background, then PNG or JPEG. Files stay on the Mac.",
+    },
+    tech: ["Swift", "SwiftUI", "AppKit", "macOS 15"],
+    links: {
+      github: "https://github.com/Sneyko/free-screen",
+    },
+  },
+  {
     slug: "signal-perdu",
     title: "Signal perdu",
     category: {

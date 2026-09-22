@@ -1,7 +1,72 @@
-import { PhoneMockupCard } from "@/components/mockups/phone-mockup-card";
 import { Chips } from "@/components/ui";
 import { tx, type Lang } from "@/lib/i18n";
 import { aven } from "@/lib/projects";
+
+const screens = [
+  {
+    src: "/shots/aven/routines.png",
+    alt: {
+      fr: "Aven — routines d'entraînement",
+      en: "Aven — workout routines",
+    },
+  },
+  {
+    src: "/shots/aven/session.png",
+    alt: {
+      fr: "Aven — séance guidée en cours",
+      en: "Aven — guided workout in progress",
+    },
+  },
+  {
+    src: "/shots/aven/exercise.png",
+    alt: {
+      fr: "Aven — fiche d'un exercice",
+      en: "Aven — exercise detail",
+    },
+  },
+  {
+    src: "/shots/aven/progression.png",
+    alt: {
+      fr: "Aven — progression et rangs musculaires",
+      en: "Aven — progress and muscle ranks",
+    },
+  },
+  {
+    src: "/shots/aven/stats.png",
+    alt: {
+      fr: "Aven — statistiques d'entraînement",
+      en: "Aven — training statistics",
+    },
+  },
+  {
+    src: "/shots/aven/stats-week.png",
+    alt: {
+      fr: "Aven — séances et volume de la semaine",
+      en: "Aven — weekly sessions and volume",
+    },
+  },
+  {
+    src: "/shots/aven/calendar.png",
+    alt: {
+      fr: "Aven — calendrier de régularité",
+      en: "Aven — consistency calendar",
+    },
+  },
+  {
+    src: "/shots/aven/ranks.png",
+    alt: {
+      fr: "Aven — classements",
+      en: "Aven — leaderboards",
+    },
+  },
+  {
+    src: "/shots/aven/achievements.png",
+    alt: {
+      fr: "Aven — succès débloqués",
+      en: "Aven — unlocked achievements",
+    },
+  },
+] as const;
 
 export function FeaturedAven({ lang }: { lang: Lang }) {
   return (
@@ -59,37 +124,21 @@ export function FeaturedAven({ lang }: { lang: Lang }) {
         </div>
 
         <div className="md:col-span-7">
-          <div className="flex items-center justify-center gap-6">
-            <PhoneMockupCard
-              variant="titanium"
-              className="hidden w-[160px] md:block md:w-[172px]"
-            >
+          <div
+            tabIndex={0}
+            aria-label={tx(lang, "Écrans d'Aven", "Aven screens")}
+            className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:thin] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent-600"
+          >
+            {screens.map((screen) => (
               <img
-                src="/shots/aven/home.png"
-                alt={tx(lang, "Aven — tableau de bord", "Aven — dashboard")}
-                className="h-full w-full object-cover outline outline-1 outline-black/10 dark:outline-white/10"
+                key={screen.src}
+                src={screen.src}
+                alt={screen.alt[lang]}
+                width={473}
+                height={1024}
+                className="h-[340px] w-auto shrink-0 snap-start rounded-xl sm:h-[420px] md:h-[460px]"
               />
-            </PhoneMockupCard>
-            <PhoneMockupCard
-              variant="titanium"
-              className="w-[212px] md:w-[238px]"
-            >
-              <img
-                src="/shots/aven/session.png"
-                alt={tx(lang, "Aven — séance en cours", "Aven — active workout")}
-                className="h-full w-full object-cover outline outline-1 outline-black/10 dark:outline-white/10"
-              />
-            </PhoneMockupCard>
-            <PhoneMockupCard
-              variant="titanium"
-              className="hidden w-[160px] md:block md:w-[172px]"
-            >
-              <img
-                src="/shots/aven/journal.png"
-                alt={tx(lang, "Aven — journal et progression", "Aven — journal and progress")}
-                className="h-full w-full object-cover outline outline-1 outline-black/10 dark:outline-white/10"
-              />
-            </PhoneMockupCard>
+            ))}
           </div>
         </div>
       </div>

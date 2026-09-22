@@ -7,7 +7,7 @@ export function About({ lang }: { lang: Lang }) {
       label: tx(lang, "Langages", "Languages"),
       items: ["Java", "Kotlin", "C", "SQL", "HTML/CSS", "JavaScript"],
     },
-    { label: "iOS", items: ["Swift", "SwiftUI"] },
+    { label: "iOS · macOS", items: ["Swift", "SwiftUI"] },
     {
       label: tx(lang, "Outils", "Tools"),
       items: ["Git", "GitHub", "Linux", "UML", "Maven", "Gradle"],
