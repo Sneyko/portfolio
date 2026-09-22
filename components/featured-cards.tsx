@@ -39,7 +39,7 @@ function FeaturedCard({
 
 export function FeaturedCards({ lang }: { lang: Lang }) {
   return (
-    <div className="hidden lg:-mt-16 lg:mb-24 lg:block">
+    <div className="mb-16 hidden lg:mb-24 lg:block">
       <div className="content-wrapper">
         <div className="flex flex-col gap-4 lg:flex-row lg:gap-8">
           <FeaturedCard

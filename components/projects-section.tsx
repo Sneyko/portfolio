@@ -84,7 +84,7 @@ export function ProjectsSection({ lang }: { lang: Lang }) {
   };
 
   return (
-    <section id="projets" className="mb-12 lg:mb-24">
+    <section id="projets" className="mb-12 scroll-mt-28 lg:mb-24">
       <div className="content-wrapper">
       <SectionHeader
         title={tx(lang, "Projets", "Projects")}

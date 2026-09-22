@@ -2,9 +2,11 @@ import { cn } from "@/lib/cn";
 
 export function Logo({
   active = false,
+  compact = false,
   className,
 }: {
   active?: boolean;
+  compact?: boolean;
   className?: string;
 }) {
   return (
@@ -27,7 +29,7 @@ export function Logo({
           T
         </span>
       </span>
-      <span className="-mt-1 hidden text-xl sm:block">
+      <span className={cn("-mt-1 text-xl", compact ? "hidden" : "hidden sm:block")}>
         <span className="text-slate-900 dark:text-slate-200">tom</span>
         <span className="text-accent-600 dark:text-accent-500">testu</span>
       </span>

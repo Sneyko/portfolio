@@ -38,7 +38,7 @@ export function ContactFooter({ lang }: { lang: Lang }) {
   return (
     <footer
       id="contact"
-      className="background-grid background-grid--fade-in mt-24 border-t border-divider-light pt-16 text-sm text-slate-900 dark:border-divider-dark dark:text-slate-200"
+      className="background-grid background-grid--fade-in mt-24 scroll-mt-28 border-t border-divider-light pt-16 text-sm text-slate-900 dark:border-divider-dark dark:text-slate-200"
     >
       <div className="content-wrapper">
         <div className="py-10 font-semibold">
