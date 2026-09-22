@@ -31,16 +31,16 @@
   --line: #e2e8f0;
   --divider-light: #e2e8f0;
   --divider-dark: #1e293b;
-  --accent-50: #f5f3ff;
-  --accent-100: #ede9fe;
-  --accent-200: #ddd6fe;
-  --accent-300: #c4b5fd;
-  --accent-400: #a78bfa;
-  --accent-500: #8b5cf6;
-  --accent-600: #7c3aed;
-  --accent-700: #6d28d9;
-  --accent-800: #5b21b6;
-  --accent-900: #4c1d95;
+  --accent-50: #fdf6f6;
+  --accent-100: #fae6e6;
+  --accent-200: #f3c9c9;
+  --accent-300: #e9a0a0;
+  --accent-400: #e07070;
+  --accent-500: #d45a5a;
+  --accent-600: #860707;
+  --accent-700: #6e0606;
+  --accent-800: #520505;
+  --accent-900: #3a0303;
   color-scheme: light;
 }
 
@@ -207,18 +207,46 @@
     }
   }
 
-  .button--solid {
-    min-width: 128px;
+  .button.button--solid {
+    height: 52px;
+    min-width: 9.5rem;
+    padding-inline: 1.75rem;
+    border-radius: 999px;
+    border: 0;
     background: var(--accent-600);
     color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.22),
+      0 0 0 3px #fff,
+      0 2px 4px rgb(15 23 42 / 0.06),
+      0 10px 22px rgb(15 23 42 / 0.14);
   }
 
-  .button--solid:hover {
+  .button.button--solid:hover {
     background: var(--accent-700);
   }
 
-  .dark .button--solid:hover {
-    background: var(--accent-500);
+  .dark .button.button--solid {
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.16),
+      0 0 0 3px #fff,
+      0 8px 20px rgb(0 0 0 / 0.35);
+  }
+
+  .dark .button.button--solid:hover {
+    background: color-mix(in oklab, var(--accent-600) 88%, white);
+  }
+
+  .button.button--solid:focus-visible {
+    border-radius: 999px;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.22),
+      0 0 0 3px #fff,
+      0 0 0 5px var(--paper),
+      0 0 0 7px var(--accent-400);
   }
 
   .button--ghost {
