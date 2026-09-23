@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore, type PointerEvent } from "react";
+import { animate, motion, useInView, useMotionValue, useTransform, type MotionValue } from "framer-motion";
 
 const STOCK_IMAGES = [
   // Curated stock photos matching the clean editorial aesthetic in the video
@@ -14,9 +15,79 @@ const STOCK_IMAGES = [
   'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=85', // Architecture
 ];
 
-// Smooth cubic easing matching the video's natural acceleration and deceleration
-function easeInOutCubic(t: number): number {
+type ScreenSize = "mobile" | "tablet" | "desktop";
+
+function subscribeToScreenSize(onChange: () => void) {
+  const queries = [window.matchMedia("(min-width: 640px)"), window.matchMedia("(min-width: 1024px)")];
+  queries.forEach((query) => query.addEventListener("change", onChange));
+  return () => queries.forEach((query) => query.removeEventListener("change", onChange));
+}
+
+function getScreenSize(): ScreenSize {
+  return window.innerWidth < 640 ? "mobile" : window.innerWidth < 1024 ? "tablet" : "desktop";
+}
+
+function subscribeToVisibility(onChange: () => void) {
+  document.addEventListener("visibilitychange", onChange);
+  return () => document.removeEventListener("visibilitychange", onChange);
+}
+
+function subscribeToReducedMotion(onChange: () => void) {
+  const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+}
+
+function easeInOutCubic(t: number) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+function wrappedAngle(rotation: number, index: number, step: number, count: number) {
+  const span = Math.max(count, 1) * step;
+  return ((rotation + index * step + span / 2) % span + span) % span - span / 2;
+}
+
+function ArchCard({ src, label, index, count, rotation, radius, step, width, height, moving, onSelect }: {
+  src: string;
+  label: string;
+  index: number;
+  count: number;
+  rotation: MotionValue<number>;
+  radius: number;
+  step: number;
+  width: number;
+  height: number;
+  moving: boolean;
+  onSelect: (index: number) => void;
+}) {
+  const angle = useTransform(rotation, (value) => wrappedAngle(value, index, step, count));
+  const transform = useTransform(angle, (value) => {
+    const radians = value * Math.PI / 180;
+    const scale = Math.max(0.86, 1 - Math.abs(value) / 55 * 0.15);
+    // Keep server and browser CSS serialization identical during hydration.
+    const x = Number((radius * Math.sin(radians)).toFixed(3));
+    const y = Number((radius * (1 - Math.cos(radians))).toFixed(3));
+    return `translate3d(${x}px, ${y}px, 0px) rotate(${Number(value.toFixed(3))}deg) scale(${Number(scale.toFixed(4))})`;
+  });
+  const opacity = useTransform(angle, (value) => Math.max(0, Math.min(1, (55 - Math.abs(value)) / 9)));
+  const visibility = useTransform(angle, (value) => Math.abs(value) < 55 ? "visible" : "hidden");
+
+  return (
+    <motion.button
+      type="button"
+      aria-label={label}
+      onClick={() => onSelect(index)}
+      className="group/arch absolute cursor-pointer border-0 bg-transparent p-0 pointer-events-auto rounded-[18px] sm:rounded-[22px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current hover:z-10 focus-visible:z-10"
+      style={{ width, height, transform, transformOrigin: "50% 100%", opacity, visibility, willChange: moving ? "transform" : "auto" }}
+    >
+      <div className="relative h-full w-full overflow-hidden rounded-[inherit] border border-black/5 bg-zinc-200 shadow-[0_14px_28px_rgba(0,0,0,0.2)] transition-transform duration-200 ease-out group-hover/arch:scale-[1.025] group-focus-visible/arch:scale-[1.025] motion-reduce:transform-none motion-reduce:transition-none">
+        {/* The shadow is painted once; only the card's transform and opacity move. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={src} alt="" width={width} height={height} className="h-full w-full object-cover select-none pointer-events-none" loading="lazy" decoding="async" draggable={false} />
+        <div className="absolute inset-0 pointer-events-none rounded-[inherit] ring-1 ring-inset ring-white/30 bg-gradient-to-t from-white/10 via-transparent to-white/15 opacity-0 transition-opacity duration-200 group-hover/arch:opacity-100 group-focus-visible/arch:opacity-100 motion-reduce:transition-none" />
+      </div>
+    </motion.button>
+  );
 }
 
 export interface ArchCardCarouselProps {
@@ -33,302 +104,180 @@ export interface ArchCardCarouselProps {
 export default function ArchCardCarousel({
   images = STOCK_IMAGES,
   alts,
-  ariaLabel = 'Project images',
+  ariaLabel = "Project images",
   radius = 800,
   stepAngleDeg = 13.5,
   cardWidth = 156,
   cardHeight = 218,
-  className = '',
+  className = "",
 }: ArchCardCarouselProps) {
-  const [rotation, setRotation] = useState(0);
-  const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
-  const [screenSize, setScreenSize] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
-  const [mounted, setMounted] = useState(false);
-
+  const screenSize = useSyncExternalStore(subscribeToScreenSize, getScreenSize, () => "desktop" as ScreenSize);
+  const pageVisible = useSyncExternalStore(subscribeToVisibility, () => !document.hidden, () => true);
+  const reduceMotion = useSyncExternalStore(subscribeToReducedMotion, () => window.matchMedia("(prefers-reduced-motion: reduce)").matches, () => true);
   const containerRef = useRef<HTMLDivElement>(null);
-  const reduceMotionRef = useRef(false);
-  const visibleRef = useRef(true);
-  const isDraggingRef = useRef(false);
-  const isHoveredRef = useRef(false);
-  const startXRef = useRef(0);
-  const startRotationRef = useRef(0);
-  const velocityRef = useRef(0);
-  const lastXRef = useRef(0);
-  const lastTimeRef = useRef(0);
-  const userInteractedTimeRef = useRef(0);
-  const currentRotationRef = useRef(0);
+  const inView = useInView(containerRef, { amount: 0.15 });
+  const rotation = useMotionValue(0);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [pointerDown, setPointerDown] = useState(false);
+  const [interaction, setInteraction] = useState(0);
+  const elapsedRef = useRef(0);
+  const cycleOriginRef = useRef(0);
+  const lastInteractionRef = useRef(0);
+  const suppressClickRef = useRef(false);
+  const settleRef = useRef<{ stop: () => void } | null>(null);
+  const gestureRef = useRef<{
+    id: number; startX: number; startY: number; startRotation: number;
+    lastX: number; lastTime: number; velocity: number; dragged: boolean;
+  } | null>(null);
+
+  const effRadius = screenSize === "mobile" ? 440 : screenSize === "tablet" ? 620 : radius;
+  const effCardWidth = screenSize === "mobile" ? Math.min(cardWidth, 110) : screenSize === "tablet" ? Math.min(cardWidth, 136) : cardWidth;
+  const effCardHeight = screenSize === "mobile" ? Math.min(cardHeight, 154) : screenSize === "tablet" ? Math.min(cardHeight, 190) : cardHeight;
+  const effStep = screenSize === "mobile" ? 15.5 : screenSize === "tablet" ? 14.5 : stepAngleDeg;
+  const active = inView && pageVisible && !reduceMotion;
+  const autoplay = active && !hovered && !focused && !pointerDown && images.length > 1;
 
   useEffect(() => {
-    const handleResize = () => {
-      const w = window.innerWidth;
-      if (w < 640) setScreenSize('mobile');
-      else if (w < 1024) setScreenSize('tablet');
-      else setScreenSize('desktop');
-    };
-    handleResize();
-    setMounted(true);
-    window.addEventListener('resize', handleResize);
-    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const syncMotion = () => {
-      reduceMotionRef.current = motionQuery.matches;
-    };
-    syncMotion();
-    motionQuery.addEventListener('change', syncMotion);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      motionQuery.removeEventListener('change', syncMotion);
-    };
-  }, []);
+    if (!active) settleRef.current?.stop();
+  }, [active]);
+
+  useEffect(() => () => settleRef.current?.stop(), []);
 
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        visibleRef.current = entry.isIntersecting;
-      },
-      { threshold: 0.15 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  const effRadius = screenSize === 'mobile' ? 440 : screenSize === 'tablet' ? 620 : radius;
-  const effCardWidth = screenSize === 'mobile' ? Math.min(cardWidth, 110) : screenSize === 'tablet' ? Math.min(cardWidth, 136) : cardWidth;
-  const effCardHeight = screenSize === 'mobile' ? Math.min(cardHeight, 154) : screenSize === 'tablet' ? Math.min(cardHeight, 190) : cardHeight;
-  const effStepAngleDeg = screenSize === 'mobile' ? 15.5 : screenSize === 'tablet' ? 14.5 : stepAngleDeg;
-
-  const count = images.length;
-  const stepAngleRad = (effStepAngleDeg * Math.PI) / 180;
-  const totalSpanRad = count * stepAngleRad;
-
-  // Exact animation timeline
-  useEffect(() => {
-    let animId: number;
-    let accumulatedTime = 0;
-    let lastStamp = performance.now();
-    const cycleDuration = 5200; // 5.2s full cycle
-    const maxAmplitudeDeg = effStepAngleDeg * 1.55;
-
+    if (!autoplay) return;
+    let frame: number;
+    let lastStamp = 0;
     const tick = (now: number) => {
-      const dt = Math.min(now - lastStamp, 34);
+      const dt = lastStamp ? Math.min(now - lastStamp, 34) : 0;
       lastStamp = now;
+      elapsedRef.current += dt;
+      const progress = (elapsedRef.current % 5200) / 5200;
+      const amplitude = effStep * 1.55;
+      let target = 0;
+      if (progress >= 0.1 && progress < 0.42) target = easeInOutCubic((progress - 0.1) / 0.32) * amplitude;
+      else if (progress >= 0.42 && progress < 0.56) target = amplitude;
+      else if (progress >= 0.56 && progress < 0.88) target = (1 - easeInOutCubic((progress - 0.56) / 0.32)) * amplitude;
+      // Motion values update transforms without rendering every card in React.
+      const blend = 1 - Math.pow(0.92, dt / (1000 / 60));
+      rotation.set(rotation.get() + (cycleOriginRef.current + target - rotation.get()) * blend);
+      frame = requestAnimationFrame(tick);
+    };
+    const delay = Math.max(0, 1200 - (performance.now() - lastInteractionRef.current));
+    const timer = window.setTimeout(() => { frame = requestAnimationFrame(tick); }, delay);
+    return () => {
+      window.clearTimeout(timer);
+      cancelAnimationFrame(frame);
+    };
+  }, [autoplay, effStep, interaction, rotation]);
 
-      if (
-        !visibleRef.current &&
-        !isDraggingRef.current &&
-        Math.abs(velocityRef.current) <= 0.04
-      ) {
-        animId = requestAnimationFrame(tick);
+  const markInteraction = () => {
+    lastInteractionRef.current = performance.now();
+    setInteraction((value) => value + 1);
+  };
+
+  const selectCard = (index: number) => {
+    settleRef.current?.stop();
+    markInteraction();
+    const target = rotation.get() - wrappedAngle(rotation.get(), index, effStep, images.length);
+    cycleOriginRef.current = target;
+    elapsedRef.current = 0;
+    if (reduceMotion) rotation.set(target);
+    else settleRef.current = animate(rotation, target, { duration: 0.4, ease: [0.22, 1, 0.36, 1] });
+  };
+
+  const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if (!event.isPrimary || event.button !== 0) return;
+    settleRef.current?.stop();
+    suppressClickRef.current = false;
+    gestureRef.current = {
+      id: event.pointerId, startX: event.clientX, startY: event.clientY,
+      startRotation: rotation.get(), lastX: event.clientX,
+      lastTime: performance.now(), velocity: 0, dragged: false,
+    };
+    setPointerDown(true);
+  };
+
+  const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    const gesture = gestureRef.current;
+    if (!gesture || gesture.id !== event.pointerId) return;
+    const deltaX = event.clientX - gesture.startX;
+    const deltaY = event.clientY - gesture.startY;
+    if (!gesture.dragged) {
+      if (Math.max(Math.abs(deltaX), Math.abs(deltaY)) < 6) return;
+      if (event.pointerType === "touch" && Math.abs(deltaY) > Math.abs(deltaX)) {
+        gestureRef.current = null;
+        setPointerDown(false);
         return;
       }
-
-      const timeSinceInteract = now - userInteractedTimeRef.current;
-
-      if (isDraggingRef.current) {
-        // Controlled by pointer
-      } else if (Math.abs(velocityRef.current) > 0.04) {
-        // Coasting with inertia
-        currentRotationRef.current += velocityRef.current;
-        velocityRef.current *= 0.92;
-        setRotation(currentRotationRef.current);
-      } else if (isHoveredRef.current) {
-        setRotation(currentRotationRef.current);
-      } else if (!reduceMotionRef.current && timeSinceInteract > 1200) {
-        accumulatedTime += dt;
-        const elapsed = accumulatedTime % cycleDuration;
-        const progress = elapsed / cycleDuration;
-        let targetDeg = 0;
-
-        if (progress < 0.10) {
-          targetDeg = 0;
-        } else if (progress < 0.42) {
-          const segProgress = (progress - 0.10) / 0.32;
-          targetDeg = easeInOutCubic(segProgress) * maxAmplitudeDeg;
-        } else if (progress < 0.56) {
-          targetDeg = maxAmplitudeDeg;
-        } else if (progress < 0.88) {
-          const segProgress = (progress - 0.56) / 0.32;
-          targetDeg = (1 - easeInOutCubic(segProgress)) * maxAmplitudeDeg;
-        } else {
-          targetDeg = 0;
-        }
-
-        currentRotationRef.current += (targetDeg - currentRotationRef.current) * 0.08;
-        setRotation(currentRotationRef.current);
-      } else {
-        setRotation(currentRotationRef.current);
-      }
-
-      animId = requestAnimationFrame(tick);
-    };
-
-    animId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(animId);
-  }, [effStepAngleDeg]);
-
-  // Pointer drag handlers
-  const onPointerDown = (e: React.PointerEvent) => {
-    isDraggingRef.current = true;
-    userInteractedTimeRef.current = performance.now();
-    startXRef.current = e.clientX;
-    lastXRef.current = e.clientX;
-    startRotationRef.current = currentRotationRef.current;
-    lastTimeRef.current = performance.now();
-    velocityRef.current = 0;
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-  };
-
-  const onPointerMove = (e: React.PointerEvent) => {
-    if (!isDraggingRef.current) return;
-    userInteractedTimeRef.current = performance.now();
-    const currentX = e.clientX;
+      gesture.dragged = true;
+      suppressClickRef.current = true;
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
     const now = performance.now();
-    const dt = Math.max(now - lastTimeRef.current, 1);
-
-    const deltaX = currentX - startXRef.current;
-    const degDelta = (deltaX / effRadius) * (180 / Math.PI) * 1.35;
-    const newRot = startRotationRef.current + degDelta;
-
-    currentRotationRef.current = newRot;
-    setRotation(newRot);
-
-    velocityRef.current = ((currentX - lastXRef.current) / dt) * 0.45;
-    lastXRef.current = currentX;
-    lastTimeRef.current = now;
+    const degreesPerPixel = 180 / Math.PI / effRadius * 1.35;
+    rotation.set(gesture.startRotation + deltaX * degreesPerPixel);
+    gesture.velocity = Math.max(-0.15, Math.min(0.15, (event.clientX - gesture.lastX) * degreesPerPixel / Math.max(now - gesture.lastTime, 1)));
+    gesture.lastX = event.clientX;
+    gesture.lastTime = now;
   };
 
-  const onPointerUp = (e: React.PointerEvent) => {
-    isDraggingRef.current = false;
-    userInteractedTimeRef.current = performance.now();
-    try {
-      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
-    } catch {
-      // Ignore
+  const finishPointer = (event: PointerEvent<HTMLDivElement>, cancelled = false) => {
+    const gesture = gestureRef.current;
+    if (!gesture || gesture.id !== event.pointerId) return;
+    gestureRef.current = null;
+    setPointerDown(false);
+    markInteraction();
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    const target = rotation.get() + (!cancelled && active && performance.now() - gesture.lastTime < 80 ? gesture.velocity * 160 : 0);
+    cycleOriginRef.current = Math.round(target / effStep) * effStep;
+    elapsedRef.current = 0;
+    if (!cancelled && gesture.dragged && active && performance.now() - gesture.lastTime < 80) {
+      settleRef.current = animate(rotation, target, { duration: 0.45, ease: [0.16, 1, 0.3, 1] });
     }
   };
 
   return (
     <div className={`relative w-full max-w-full flex flex-col items-center select-none ${className}`}>
-      {/* ── Viewport ── */}
       <div
         ref={containerRef}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
-        onMouseEnter={() => {
-          isHoveredRef.current = true;
+        onPointerUp={(event) => finishPointer(event)}
+        onPointerCancel={(event) => finishPointer(event, true)}
+        onLostPointerCapture={(event) => {
+          if (event.target === event.currentTarget) finishPointer(event, true);
         }}
-        onMouseLeave={() => {
-          isHoveredRef.current = false;
-          setHoveredCardIndex(null);
+        onPointerLeave={(event) => {
+          if (!event.currentTarget.hasPointerCapture(event.pointerId)) finishPointer(event, true);
+        }}
+        onClickCapture={(event) => {
+          if (!suppressClickRef.current) return;
+          event.preventDefault();
+          event.stopPropagation();
+          suppressClickRef.current = false;
+        }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onFocusCapture={() => setFocused(true)}
+        onBlurCapture={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
+        }}
+        onKeyDown={(event) => {
+          if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+          event.preventDefault();
+          const current = Math.round(-rotation.get() / effStep);
+          selectCard(current + (event.key === "ArrowRight" ? 1 : -1));
         }}
         role="region"
         aria-label={ariaLabel}
         className="relative w-full overflow-hidden flex items-end justify-center cursor-grab active:cursor-grabbing touch-pan-y"
-        style={{
-          height: `${effCardHeight + (screenSize === 'mobile' ? 95 : 165)}px`,
-        }}
+        style={{ height: effCardHeight + (screenSize === "mobile" ? 95 : 165) }}
       >
-        {/* ── Cards Rendered Along Circular Arch ── */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          {mounted
-            ? images.map((src, i) => {
-            const rotRad = (rotation * Math.PI) / 180;
-            const baseAngle = i * stepAngleRad + rotRad;
-
-            // Smooth circular wrapping
-            let offsetAngle = ((baseAngle % totalSpanRad) + totalSpanRad) % totalSpanRad;
-            if (offsetAngle > totalSpanRad / 2) {
-              offsetAngle -= totalSpanRad;
-            }
-
-            const offsetDeg = (offsetAngle * 180) / Math.PI;
-
-            // Visible arc horizon
-            if (Math.abs(offsetDeg) > 55) return null;
-
-            // Convex circular path
-            const x = effRadius * Math.sin(offsetAngle);
-            const y = effRadius * (1 - Math.cos(offsetAngle));
-
-            const rotateZ = offsetDeg;
-
-            const distFromCenter = Math.abs(offsetDeg);
-            const baseScale = Math.max(0.86, 1.0 - (distFromCenter / 55) * 0.15);
-            const isHovered = hoveredCardIndex === i;
-            const scale = isHovered ? baseScale * 1.025 : baseScale;
-            const opacity = distFromCenter > 46 ? 1 - (distFromCenter - 46) / 9 : 1;
-            const zIndex = isHovered ? 250 : Math.round(100 - distFromCenter * 1.5);
-            const isCenter = distFromCenter < effStepAngleDeg / 2;
-
-            return (
-              <div
-                key={src}
-                role="button"
-                tabIndex={0}
-                aria-label={alts?.[i] ?? `Card ${i + 1}`}
-                onKeyDown={(e) => {
-                  if (e.key !== 'Enter' && e.key !== ' ') return;
-                  e.preventDefault();
-                  userInteractedTimeRef.current = performance.now();
-                  currentRotationRef.current = -i * effStepAngleDeg;
-                  setRotation(currentRotationRef.current);
-                }}
-                onMouseEnter={() => {
-                  setHoveredCardIndex(i);
-                  isHoveredRef.current = true;
-                }}
-                onMouseLeave={() => {
-                  setHoveredCardIndex(null);
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  userInteractedTimeRef.current = performance.now();
-                  currentRotationRef.current = -i * effStepAngleDeg;
-                  setRotation(currentRotationRef.current);
-                }}
-                className="absolute pointer-events-auto cursor-pointer transition-all duration-300 ease-out"
-                style={{
-                  width: `${effCardWidth}px`,
-                  height: `${effCardHeight}px`,
-                  transformOrigin: '50% 100%',
-                  transform: `translate3d(${x}px, ${y}px, 0px) rotateZ(${rotateZ}deg) scale(${scale})`,
-                  zIndex,
-                  opacity,
-                  filter: isHovered
-                    ? 'drop-shadow(0 14px 28px rgba(0, 0, 0, 0.12))'
-                    : `drop-shadow(0 ${14 - distFromCenter * 0.16}px ${20 + (isCenter ? 12 : 0)}px rgba(0, 0, 0, ${0.18 + (isCenter ? 0.08 : 0)}))`,
-                }}
-              >
-                {/* Pure Borderless Rounded Image Card with soft, delicate hover glow */}
-                <div
-                  className={`w-full h-full rounded-[18px] sm:rounded-[22px] overflow-hidden bg-zinc-200 transition-all duration-500 ease-out relative ${
-                    isHovered
-                      ? 'border border-black/10 shadow-[0_12px_28px_-6px_rgba(0,0,0,0.12),0_0_24px_3px_rgba(236,94,39,0.13),0_0_8px_1px_rgba(255,255,255,0.8)]'
-                      : 'border border-black/5 shadow-xs'
-                  }`}
-                >
-                  <img
-                    src={src}
-                    alt=""
-                    className={`w-full h-full object-cover select-none pointer-events-none transition-transform duration-500 ease-out ${
-                      isHovered ? 'scale-[1.025]' : 'scale-100'
-                    }`}
-                    loading="lazy"
-                    draggable={false}
-                  />
-
-                  {/* Soft ambient inner sheen on hover */}
-                  {isHovered && (
-                    <div className="absolute inset-0 pointer-events-none rounded-[18px] sm:rounded-[22px] ring-1 ring-inset ring-white/30 bg-gradient-to-t from-white/10 via-transparent to-white/15" />
-                  )}
-                </div>
-              </div>
-            );
-          })
-            : null}
+          {images.map((src, index) => (
+            <ArchCard key={src} src={src} label={alts?.[index] ?? `Card ${index + 1}`} index={index} count={images.length} rotation={rotation} radius={effRadius} step={effStep} width={effCardWidth} height={effCardHeight} moving={active && (autoplay || pointerDown)} onSelect={selectCard} />
+          ))}
         </div>
       </div>
     </div>

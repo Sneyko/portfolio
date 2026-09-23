@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-
 import { BrowserMockupCard } from "@/components/mockups/browser-mockup-card";
 import { cn } from "@/lib/cn";
 import type { Lang } from "@/lib/i18n";
@@ -183,7 +181,7 @@ export function KotlinCover({ className }: { className?: string }) {
           {"    "}
           <span className="text-[#a9b8e8]">var</span> nbTokens: Int = 0
         </p>
-        <p>{"    "}// … parcourt le texte caractère par caractère</p>
+        <p>{"    // … parcourt le texte caractère par caractère"}</p>
         <p>
           {"    "}
           <span className="text-[#a9b8e8]">while</span> (i &lt; texte.length - 1) {"{"}

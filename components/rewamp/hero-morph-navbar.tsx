@@ -38,7 +38,15 @@ export function HeroMorphNavbar({ lang }: { lang: Lang }) {
   ];
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    let wasScrolled = false;
+    const onScroll = () => {
+      const nextScrolled = window.scrollY > 24;
+      if (nextScrolled === wasScrolled) return;
+
+      wasScrolled = nextScrolled;
+      setScrolled(nextScrolled);
+      if (nextScrolled) setOpen(false);
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -46,7 +54,10 @@ export function HeroMorphNavbar({ lang }: { lang: Lang }) {
 
   useEffect(() => {
     const query = window.matchMedia("(max-width: 767px)");
-    const apply = () => setNarrow(query.matches);
+    const apply = () => {
+      setNarrow(query.matches);
+      if (!query.matches) setOpen(false);
+    };
     apply();
     query.addEventListener("change", apply);
     return () => query.removeEventListener("change", apply);
@@ -67,10 +78,6 @@ export function HeroMorphNavbar({ lang }: { lang: Lang }) {
     observer.observe(root, { attributes: true, attributeFilter: ["class"] });
     return () => observer.disconnect();
   }, []);
-
-  useEffect(() => {
-    if (!narrow) setOpen(false);
-  }, [narrow, scrolled]);
 
   return (
     <MotionConfig reducedMotion="user">

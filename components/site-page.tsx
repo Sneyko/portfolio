@@ -1,6 +1,7 @@
 import { About } from "@/components/about";
 import { ContactFooter } from "@/components/contact-footer";
 import { FeaturedCards } from "@/components/featured-cards";
+import { FeaturedProjects } from "@/components/featured-projects";
 import { HomeHero } from "@/components/home-hero";
 import { Principles } from "@/components/principles";
 import { ProjectArch } from "@/components/project-arch";
@@ -15,9 +16,10 @@ export function SitePage({ lang }: { lang: Lang }) {
       <main>
         <HomeHero lang={lang} />
         <ProjectArch lang={lang} />
+        <FeaturedProjects lang={lang} />
+        <ProjectsSection lang={lang} />
         <FeaturedCards lang={lang} />
         <Principles lang={lang} />
-        <ProjectsSection lang={lang} />
         <About lang={lang} />
       </main>
       <ContactFooter lang={lang} />

@@ -1,7 +1,6 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
-import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/cn";
 
@@ -12,12 +11,6 @@ export function ThemeToggle({
   className?: string;
   label?: string;
 }) {
-  const [dark, setDark] = useState(false);
-
-  useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"));
-  }, []);
-
   function toggle() {
     const root = document.documentElement;
     const next = !root.classList.contains("dark");
@@ -26,9 +19,8 @@ export function ThemeToggle({
     document.head.append(freeze);
     root.classList.toggle("dark", next);
     localStorage.setItem("theme", next ? "dark" : "light");
-    window.getComputedStyle(root).opacity;
+    void window.getComputedStyle(root).opacity;
     freeze.remove();
-    setDark(next);
   }
 
   return (
@@ -42,11 +34,8 @@ export function ThemeToggle({
       )}
       aria-label={label}
     >
-      {dark ? (
-        <Sun size={18} strokeWidth={2} aria-hidden="true" />
-      ) : (
-        <Moon size={18} strokeWidth={2} aria-hidden="true" />
-      )}
+      <Sun size={18} strokeWidth={2} className="hidden dark:block" aria-hidden="true" />
+      <Moon size={18} strokeWidth={2} className="dark:hidden" aria-hidden="true" />
     </button>
   );
 }
