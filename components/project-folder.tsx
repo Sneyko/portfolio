@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { X } from "lucide-react";
 
 import {
@@ -11,6 +11,7 @@ import {
   WebCover,
 } from "@/components/covers";
 import FolderTabCard from "@/components/rewamp/FolderTabCard";
+import { ProjectCardPreview } from "@/components/project-card-preview";
 import { Chips, TextLink } from "@/components/ui";
 import { tx, type Lang } from "@/lib/i18n";
 import { aven, type Project } from "@/lib/projects";
@@ -62,10 +63,24 @@ const webShots: Record<string, { url: string; src: string; fr: string; en: strin
 
 export function ProjectFolder({ project, lang }: { project: Project; lang: Lang }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleId = useId();
   const [open, setOpen] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
   const isAven = project.slug === "aven";
   const body = isAven ? aven.description[lang] : project.summary[lang];
+
+  useEffect(() => () => {
+    if (closeTimerRef.current !== null) clearTimeout(closeTimerRef.current);
+  }, []);
+
+  function finishClose() {
+    if (closeTimerRef.current !== null) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+    dialogRef.current?.close();
+  }
 
   function openFolder() {
     const dialog = dialogRef.current;
@@ -73,6 +88,7 @@ export function ProjectFolder({ project, lang }: { project: Project; lang: Lang 
     delete dialog.dataset.closing;
     dialog.showModal();
     dialog.focus();
+    setHasOpened(true);
     setOpen(true);
   }
 
@@ -81,18 +97,11 @@ export function ProjectFolder({ project, lang }: { project: Project; lang: Lang 
     if (!dialog?.open || dialog.dataset.closing === "true") return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) {
-      dialog.close();
+      finishClose();
       return;
     }
     dialog.dataset.closing = "true";
-    const timeout = window.setTimeout(() => dialog.close(), 180);
-    const finish = (event: globalThis.TransitionEvent) => {
-      if (event.target !== dialog || event.propertyName !== "opacity") return;
-      window.clearTimeout(timeout);
-      dialog.removeEventListener("transitionend", finish);
-      dialog.close();
-    };
-    dialog.addEventListener("transitionend", finish);
+    closeTimerRef.current = setTimeout(finishClose, 200);
   }
 
   return (
@@ -103,6 +112,7 @@ export function ProjectFolder({ project, lang }: { project: Project; lang: Lang 
         description={project.summary[lang]}
         tagsCount={project.year}
         shotsCount={project.tech.slice(0, 2).join(" · ")}
+        preview={<ProjectCardPreview slug={project.slug} lang={lang} />}
         onOpen={openFolder}
         open={open}
         actionLabel={tx(lang, `Ouvrir ${project.title}`, `Open ${project.title}`)}
@@ -113,7 +123,14 @@ export function ProjectFolder({ project, lang }: { project: Project; lang: Lang 
         aria-labelledby={titleId}
         tabIndex={-1}
         className="folder-dialog"
-        onClose={() => setOpen(false)}
+        onClose={(event) => setOpen(event.currentTarget.open)}
+        onTransitionEnd={(event) => {
+          if (
+            event.target === event.currentTarget &&
+            event.propertyName === "opacity" &&
+            event.currentTarget.dataset.closing === "true"
+          ) finishClose();
+        }}
         onCancel={(event) => {
           event.preventDefault();
           closeFolder();
@@ -134,7 +151,7 @@ export function ProjectFolder({ project, lang }: { project: Project; lang: Lang 
             </button>
           </div>
 
-          <div className="overflow-y-auto px-5 py-6 sm:px-8 sm:py-7">
+          <div className="min-h-0 overflow-y-auto overscroll-y-contain px-5 py-6 sm:px-8 sm:py-7">
             <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
               <h2 id={titleId} className="text-[26px] font-black tracking-tight text-slate-800 dark:text-slate-100">
                 {project.title}
@@ -145,7 +162,7 @@ export function ProjectFolder({ project, lang }: { project: Project; lang: Lang 
               {project.category[lang]}
             </p>
 
-            <div className="mt-5">{renderPreview(project.slug, lang)}</div>
+            <div className="mt-5">{hasOpened ? renderPreview(project.slug, lang) : null}</div>
 
             <p className="mt-5 max-w-[68ch] text-[15px] leading-relaxed text-pretty text-slate-600 dark:text-slate-300">
               {body}
@@ -213,6 +230,8 @@ function renderPreview(slug: string, lang: Lang) {
             alt={lang === "fr" ? screen.fr : screen.en}
             width={473}
             height={1024}
+            loading="lazy"
+            decoding="async"
             className="h-72 w-auto shrink-0 snap-start rounded-xl sm:h-80"
           />
         ))}
