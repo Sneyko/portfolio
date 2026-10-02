@@ -1,10 +1,12 @@
 import type { MetadataRoute } from "next";
 
+import { brand } from "@/lib/brand";
+
 export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
-    { url: "https://tomtestu.me/", priority: 1 },
-    { url: "https://tomtestu.me/en/", priority: 0.8 },
+    { url: `${brand.url}/`, priority: 1 },
+    { url: `${brand.url}/en/`, priority: 0.8 },
   ];
 }

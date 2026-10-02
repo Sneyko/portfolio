@@ -1,12 +1,12 @@
 import Link from "next/link";
 
 import { ThemeToggle } from "@/components/theme-toggle";
+import { brand } from "@/lib/brand";
 import { tx, type Lang } from "@/lib/i18n";
 
 function LanguageSwitch({ lang }: { lang: Lang }) {
   const active = "px-0.5 text-fg";
-  const idle =
-    "px-0.5 text-muted-soft transition-colors hover:text-fg";
+  const idle = "px-0.5 text-muted-soft transition-colors hover:text-fg";
 
   return (
     <nav aria-label="Language" className="flex items-center gap-1 font-mono text-xs">
@@ -47,27 +47,19 @@ export function SiteHeader({ lang }: { lang: Lang }) {
         className="grid size-32 shrink-0 place-items-center rounded-full border border-border bg-[color-mix(in_srgb,var(--fg)_6%,transparent)]"
       >
         <span className="font-display text-4xl font-semibold tracking-tight text-fg-soft">
-          TT
+          {brand.initials}
         </span>
       </span>
 
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="site-header-title">Tom Testu</h1>
+          <h1 className="site-header-title">{brand.name}</h1>
           <div className="flex items-center gap-2">
             <LanguageSwitch lang={lang} />
-            <ThemeToggle
-              label={tx(lang, "Changer de thème", "Toggle theme")}
-            />
+            <ThemeToggle label={tx(lang, "Changer de thème", "Toggle theme")} />
           </div>
         </div>
-        <p className="site-header-greeting">
-          {tx(
-            lang,
-            "Étudiant en BUT Informatique · Toulouse",
-            "Computer Science student · Toulouse",
-          )}
-        </p>
+        <p className="site-header-greeting">{brand.greeting[lang]}</p>
       </div>
     </header>
   );
