@@ -15,6 +15,7 @@ export function buildMetadata(lang: Lang): Metadata {
       canonical: isFr ? "/" : "/en",
       languages: { fr: "/", en: "/en" },
     },
+    icons: brand.meta.icons,
     openGraph: {
       type: "website",
       locale: isFr ? "fr_FR" : "en_US",

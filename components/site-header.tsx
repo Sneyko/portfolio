@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -42,14 +43,25 @@ function LanguageSwitch({ lang }: { lang: Lang }) {
 export function SiteHeader({ lang }: { lang: Lang }) {
   return (
     <header className="mb-5.5 flex items-center gap-3">
-      <span
-        aria-hidden="true"
-        className="grid size-32 shrink-0 place-items-center rounded-full border border-border bg-[color-mix(in_srgb,var(--fg)_6%,transparent)]"
-      >
-        <span className="font-display text-4xl font-semibold tracking-tight text-fg-soft">
-          {brand.initials}
+      {brand.avatar ? (
+        <Image
+          src={brand.avatar}
+          alt=""
+          width={128}
+          height={128}
+          priority
+          className="size-32 shrink-0 rounded-full border border-border object-cover"
+        />
+      ) : (
+        <span
+          aria-hidden="true"
+          className="grid size-32 shrink-0 place-items-center rounded-full border border-border bg-[color-mix(in_srgb,var(--fg)_6%,transparent)]"
+        >
+          <span className="font-display text-4xl font-semibold tracking-tight text-fg-soft">
+            {brand.initials}
+          </span>
         </span>
-      </span>
+      )}
 
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <div className="flex items-center justify-between gap-3">
