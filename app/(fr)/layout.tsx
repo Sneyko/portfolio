@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import "../globals.css";
 
 import { ThemeScript } from "@/components/theme-script";
-import { mono, sans } from "@/lib/fonts";
+import { display, mono, sans } from "@/lib/fonts";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
   ],
 };
 
@@ -39,13 +39,13 @@ export default function FrLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="fr"
-      className={`${sans.variable} ${mono.variable}`}
+      className={`${sans.variable} ${display.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
       <head>
         <ThemeScript />
       </head>
-      <body className="min-h-dvh bg-paper text-slate-900 antialiased dark:bg-slate-900 dark:text-slate-200">
+      <body className="flex min-h-dvh flex-col bg-bg font-sans text-fg antialiased">
         {children}
       </body>
     </html>

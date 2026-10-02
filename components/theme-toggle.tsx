@@ -28,14 +28,15 @@ export function ThemeToggle({
       type="button"
       onClick={toggle}
       className={cn(
-        "flex h-9 w-9 items-center justify-center rounded-xl text-slate-700 transition-colors duration-150 hover:bg-slate-300/50",
-        "dark:text-slate-200 dark:hover:bg-slate-800/50",
+        "inline-flex items-center justify-center rounded-sm border border-border p-1.5 text-muted",
+        "transition-colors duration-200 hover:border-muted-soft hover:text-fg",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
         className,
       )}
       aria-label={label}
     >
-      <Sun size={18} strokeWidth={2} className="hidden dark:block" aria-hidden="true" />
-      <Moon size={18} strokeWidth={2} className="dark:hidden" aria-hidden="true" />
+      <Sun size={14} strokeWidth={1.5} className="hidden dark:block" aria-hidden="true" />
+      <Moon size={14} strokeWidth={1.5} className="dark:hidden" aria-hidden="true" />
     </button>
   );
 }

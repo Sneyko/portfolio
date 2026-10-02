@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 
 import { tx, type Lang } from "@/lib/i18n";
 
+const buttonClass =
+  "inline-flex h-9 items-center gap-2 rounded-sm border border-border px-3.5 text-sm font-semibold text-fg transition-colors hover:border-muted-soft hover:bg-[color-mix(in_srgb,var(--fg)_4%,transparent)]";
+
 export function ContactCopyButton({ email, lang }: { email: string; lang: Lang }) {
   const [status, setStatus] = useState<"idle" | "copied" | "error">("idle");
 
@@ -26,25 +29,21 @@ export function ContactCopyButton({ email, lang }: { email: string; lang: Lang }
 
   return (
     <div className="flex max-w-full flex-col items-start gap-2">
-      <button
-        type="button"
-        onClick={copyEmail}
-        className="button button--ghost h-[52px] min-w-44 rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent-500"
-      >
+      <button type="button" onClick={copyEmail} className={buttonClass}>
         {status === "copied" ? (
-          <Check size={18} aria-hidden="true" />
+          <Check size={16} aria-hidden="true" />
         ) : (
-          <Copy size={18} aria-hidden="true" />
+          <Copy size={16} aria-hidden="true" />
         )}
         {status === "copied"
           ? tx(lang, "Adresse copiée", "Email copied")
-          : tx(lang, "Copier l’adresse", "Copy email address")}
+          : tx(lang, "Copier l'adresse", "Copy email address")}
       </button>
       <p
         role="status"
         className={
           status === "error"
-            ? "max-w-72 text-sm text-slate-600 dark:text-slate-400"
+            ? "max-w-72 text-sm text-fg-soft"
             : "sr-only"
         }
       >
@@ -53,8 +52,8 @@ export function ContactCopyButton({ email, lang }: { email: string; lang: Lang }
           : status === "error"
             ? tx(
                 lang,
-                "Copie impossible. Sélectionnez l’adresse ci-dessus pour la copier.",
-                "Couldn’t copy. Select the email address above to copy it.",
+                "Copie impossible. Sélectionnez l'adresse ci-dessus pour la copier.",
+                "Couldn't copy. Select the email address above to copy it.",
               )
             : ""}
       </p>
