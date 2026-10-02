@@ -1,8 +1,13 @@
-# Portfolio — tomtestu.me
+# Portfolio — Tom Testu / Evro AI
 
-Portfolio bilingue (FR/EN) de **Tom Testu** — étudiant en 2e année de BUT Informatique à l'IUT de Toulouse. Applications iOS, sites web et projets universitaires.
+Portfolio bilingue (FR/EN) en deux variantes servies sur deux domaines :
 
-Design minimaliste, une seule colonne de lecture (inspiré de [spidex.dev](https://spidex.dev)), avec des cartes flottantes pour les projets.
+| Domaine | Projet Vercel | Variante | Contenu |
+| --- | --- | --- | --- |
+| [tom-testu.com](https://tom-testu.com) | `tom-testu` | `tom` | CV / LinkedIn — parcours, compétences, projets, contact |
+| [evroai.xyz](https://evroai.xyz) | `evro` | `evro` | Personal branding — bio, liens (X, GitHub, e-mail), projets |
+
+Même repo, même design minimaliste (inspiré de [spidex.dev](https://spidex.dev)) ; la variante est choisie au build par la variable `NEXT_PUBLIC_SITE_VARIANT`.
 
 ## Stack
 
@@ -15,26 +20,33 @@ Design minimaliste, une seule colonne de lecture (inspiré de [spidex.dev](https
 
 - `app/(fr)/` — version française (route `/`)
 - `app/(en)/en/` — version anglaise (route `/en/`)
-- `app/globals.css` — tokens de design (fond, encre, accent, bordure) et styles des cartes / dialogue projet
-- `components/` — sections du site : `site-header`, `intro`, `projects` (cartes), `parcours` (frise), `skills`, `contact`
+- `lib/brand.ts` — marque, monogramme, URL et métadonnées par variante ; expose `SITE_VARIANT` (lu depuis `NEXT_PUBLIC_SITE_VARIANT`)
+- `components/tom-page.tsx` / `components/evro-page.tsx` — les deux pages
+- `components/` — sections : `site-header`, `intro` / `evro-intro`, `projects` (cartes flottantes), `parcours`, `skills`, `contact`
 - `components/project-card.tsx` — carte projet + dialogue de détail (client)
-- `components/covers.tsx` — aperçus pour le dialogue (fenêtre navigateur, adaptée d'[Opensource UI](https://opensourceui.in), MIT)
 - `lib/projects.ts` — contenu des projets, bilingue
-- `public/shots/` — captures utilisées sur le site (app Aven + projets)
+- `public/shots/` — captures utilisées sur le site
 
 ## Développement
 
 ```bash
 bun install
-bun dev
+bun dev                                   # variante Tom (défaut)
+NEXT_PUBLIC_SITE_VARIANT=evro bun dev     # variante Evro
 ```
 
 ## Déploiement
 
-Export statique (`out/`) construit par GitHub Actions et publié sur GitHub Pages → **https://tomtestu.me**
+Deux projets Vercel branchés sur ce repo :
+
+- `tom-testu` → `tom-testu.com`, avec `NEXT_PUBLIC_SITE_VARIANT=tom`
+- `evro` → `evroai.xyz`, avec `NEXT_PUBLIC_SITE_VARIANT=evro`
+
+Chaque push sur `main` redéploie les deux.
 
 ## Modifier le contenu
 
-- Projets : tout est dans `lib/projects.ts` (champs `fr` / `en`).
-- Textes du site (hero, à propos, contact) : dans `components/*.tsx`, via le helper `tx(lang, fr, en)`.
-</content>
+- Projets : `lib/projects.ts` (champs `fr` / `en`).
+- Marque, monogramme, métadonnées, URL canonique : `lib/brand.ts`.
+- Textes : `components/*.tsx` via le helper `tx(lang, fr, en)`.
+- Coordonnées (e-mail, GitHub, X) : `lib/site.ts`.
