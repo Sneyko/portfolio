@@ -41,6 +41,7 @@ export const brands: Record<Variant, Brand> = {
     variant: "tom",
     name: "Tom Testu",
     initials: "TT",
+    avatar: "/tom/avatar.png",
     url: "https://tom-testu.com",
     greeting: {
       fr: "Étudiant en BUT Informatique · Toulouse",
