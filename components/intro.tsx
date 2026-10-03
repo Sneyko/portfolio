@@ -1,4 +1,4 @@
-import { GithubIcon } from "@/components/github-icon";
+import { LinkedinIcon } from "@/components/linkedin-icon";
 import { tx, type Lang } from "@/lib/i18n";
 import { site } from "@/lib/site";
 
@@ -45,13 +45,13 @@ export function Intro({ lang }: { lang: Lang }) {
       <p className="mt-8">
         {tx(lang, "Envie d'échanger ? Écrivez-moi sur", "Want to talk? Say hi on")}{" "}
         <a
-          href={site.github}
+          href={site.linkedin}
           target="_blank"
           rel="noopener noreferrer"
           className="link-accent inline-flex items-center gap-1"
         >
-          <GithubIcon size={14} />
-          GitHub
+          <LinkedinIcon size={14} />
+          LinkedIn
         </a>{" "}
         {tx(lang, "ou par", "or send me an")}{" "}
         <a href={`mailto:${site.email}`} className="link-accent">

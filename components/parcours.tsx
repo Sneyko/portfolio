@@ -1,4 +1,4 @@
-import { GraduationCap, Rocket } from "lucide-react";
+import { GraduationCap, Rocket, School } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { tx, type Lang } from "@/lib/i18n";
@@ -78,17 +78,6 @@ export function Parcours({ lang }: { lang: Lang }) {
       icon: <GraduationCap className="h-5 w-5" strokeWidth={1.5} aria-hidden="true" />,
     },
     {
-      date: "2025",
-      title: tx(lang, "Nuit de l'Info", "Nuit de l'Info"),
-      description: tx(
-        lang,
-        "Village Numérique Résistant, imaginé et livré en une nuit.",
-        "Village Numérique Résistant, imagined and shipped in one night.",
-      ),
-      image: "/shots/web/village.png",
-      href: "https://github.com/Sneyko/village-numerique-resistant",
-    },
-    {
       date: tx(lang, "2025 – aujourd'hui", "2025 – now"),
       title: "BUT Informatique",
       description: tx(
@@ -96,7 +85,7 @@ export function Parcours({ lang }: { lang: Lang }) {
         "IUT de Toulouse, parcours AGED — administration et exploitation des données.",
         "IUT Toulouse, AGED track — data administration and processing.",
       ),
-      image: "/shots/web/but.png",
+      icon: <School className="h-5 w-5" strokeWidth={1.5} aria-hidden="true" />,
       href: "https://www.iut-tlse3.fr/",
     },
     {
